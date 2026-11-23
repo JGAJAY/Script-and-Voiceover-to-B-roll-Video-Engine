@@ -67,12 +67,12 @@ class TTSService:
             cache_dir.mkdir(parents=True, exist_ok=True)
             output_path = cache_dir / f"{job_id}_narration.mp3"
 
-        # Check if running in offline test / mock mode
-        if settings.ENABLE_MOCK_SOURCES or os.environ.get("ENABLE_MOCK_SOURCES") == "true" or os.environ.get("APP_ENV") == "test":
+        # Check if running strictly in automated test suite
+        if os.environ.get("APP_ENV") == "test":
             logger.info("Test/offline mode active: using instant offline synthesizer.")
             return self._generate_offline_speech(clean_text, voice_id, output_path, job_id)
 
-        # Try edge-tts with strict timeout
+        # Try edge-tts for high-quality real human speech narration
         try:
             import edge_tts
             communicate = edge_tts.Communicate(clean_text, voice_id)
@@ -86,12 +86,12 @@ class TTSService:
                         elif chunk["type"] == "WordBoundary":
                             submaker.create_sub((chunk["offset"], chunk["duration"]), chunk["text"])
 
-            await asyncio.wait_for(_stream_edge(), timeout=4.0)
+            await asyncio.wait_for(_stream_edge(), timeout=20.0)
 
             duration = await self._get_audio_duration(output_path)
             words = self._extract_words_from_submaker(submaker, clean_text, duration)
             
-            logger.info(f"Generated speech via edge-tts ({voice_id}), duration: {duration:.2f}s")
+            logger.info(f"Generated real speech via edge-tts ({voice_id}), duration: {duration:.2f}s")
             return {
                 "audio_path": output_path,
                 "duration": duration,

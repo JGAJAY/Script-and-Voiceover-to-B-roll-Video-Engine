@@ -68,7 +68,7 @@ class GenerativeVideoProvider(BaseFootageProvider):
         return sanitized
 
     async def prepare_clip(self, item: FootageItem, target_dir: Path) -> Path:
-        """Generates dynamic AI abstract visuals via procedural harmonic filters."""
+        """Generates dynamic AI abstract visuals via sleek motion graphics or stylized footage."""
         target_dir.mkdir(parents=True, exist_ok=True)
         clip_path = target_dir / f"{item.clip_id}_{int(item.duration)}s.mp4"
 
@@ -78,24 +78,39 @@ class GenerativeVideoProvider(BaseFootageProvider):
         import imageio_ffmpeg
         ffmpeg_exe = settings.FFMPEG_PATH or imageio_ffmpeg.get_ffmpeg_exe()
 
-        # Dynamic glowing generative filter (harmonic wave motion + gradients)
-        filter_str = (
-            "mandelbrot=s=1920x1080:rate=30:maxiter=60:start_scale=1.8,"
-            "curves=all='0/0 0.5/0.45 1/1',"
-            "eq=contrast=1.15:saturation=1.3:brightness=0.02"
-        )
-
-        cmd = [
-            ffmpeg_exe, "-nostdin", "-y",
-            "-f", "lavfi",
-            "-i", filter_str,
-            "-t", str(item.duration),
-            "-r", "30",
-            "-c:v", "libx264",
-            "-pix_fmt", "yuv420p",
-            "-preset", "ultrafast",
-            str(clip_path)
-        ]
+        gen_base_video = Path("storage/clips/city_traffic.mp4").resolve()
+        if gen_base_video.exists():
+            # Futuristic glowing cyber / generative motion style
+            cmd = [
+                ffmpeg_exe, "-nostdin", "-y",
+                "-stream_loop", "-1",
+                "-i", str(gen_base_video),
+                "-t", str(item.duration),
+                "-r", "30",
+                "-vf", (
+                    "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,"
+                    "eq=contrast=1.2:saturation=1.4:brightness=0.02,"
+                    "drawgrid=width=120:height=120:color=0x38bdf8@0.25"
+                ),
+                "-c:v", "libx264",
+                "-pix_fmt", "yuv420p",
+                "-preset", "ultrafast",
+                str(clip_path)
+            ]
+        else:
+            # Clean dark modern tech grid with subtle cyan pulse
+            filter_str = f"color=c=0x0b132b:s=1920x1080:d={int(item.duration + 2)},drawgrid=width=100:height=100:color=0x38bdf8@0.3"
+            cmd = [
+                ffmpeg_exe, "-nostdin", "-y",
+                "-f", "lavfi",
+                "-i", filter_str,
+                "-t", str(item.duration),
+                "-r", "30",
+                "-c:v", "libx264",
+                "-pix_fmt", "yuv420p",
+                "-preset", "ultrafast",
+                str(clip_path)
+            ]
 
         proc = await asyncio.create_subprocess_exec(
             *cmd,

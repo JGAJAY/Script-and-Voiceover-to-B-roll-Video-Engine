@@ -45,7 +45,7 @@ class Settings(BaseSettings):
     PEXELS_API_KEY: str = ""
     PIXABAY_API_KEY: str = ""
     OPENAI_API_KEY: str = ""
-    ENABLE_MOCK_SOURCES: bool = True
+    ENABLE_MOCK_SOURCES: bool = False
     
     # FFmpeg executable path
     FFMPEG_PATH: str = ""

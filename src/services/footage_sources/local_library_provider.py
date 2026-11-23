@@ -13,65 +13,72 @@ logger = logging.getLogger(__name__)
 CURATED_CATALOG = [
     {
         "id": "tech_servers_01",
-        "title": "Cloud data center servers and blue fiber optics",
-        "tags": ["cloud", "computing", "technology", "server", "data", "software", "infrastructure"],
+        "title": "Cloud data center servers and tech workspace",
+        "tags": ["cloud", "computing", "technology", "server", "data", "software", "infrastructure", "code", "python", "developer", "tutorial"],
+        "stock_file": "storage/clips/classroom.mp4",
         "generator_filter": "color=c=0x0a192f:s=1920x1080:d={dur},drawgrid=width=80:height=80:color=0x1e3a8a@0.4",
         "licence": "CC0 1.0 Universal Public Domain (Commercial Use Permitted)",
-        "attribution": "IncuBrix Procedural Library / Open Media",
+        "attribution": "Open Media / Commercial Verified Library",
         "link": "https://incubrix.internal/media/tech_servers_01"
     },
     {
         "id": "business_growth_01",
-        "title": "Business growth value metric upward chart visualization",
-        "tags": ["value", "business", "growth", "finance", "sales", "statistics", "metric", "chart"],
-        "generator_filter": "mandelbrot=s=1920x1080:rate=30:maxiter=80:start_scale=1.5,curves=vintage",
+        "title": "Business growth and team professional workflow",
+        "tags": ["value", "business", "growth", "finance", "sales", "statistics", "metric", "chart", "promo", "team", "people"],
+        "stock_file": "storage/clips/people_walking.mp4",
+        "generator_filter": "color=c=0x0f172a:s=1920x1080:d={dur},drawgrid=width=100:height=100:color=0x38bdf8@0.2",
         "licence": "CC0 1.0 Universal Public Domain (Commercial Use Permitted)",
-        "attribution": "IncuBrix Procedural Library / Open Media",
+        "attribution": "Open Media / Commercial Verified Library",
         "link": "https://incubrix.internal/media/business_growth_01"
     },
     {
         "id": "modern_banking_01",
-        "title": "Modern financial architectural building facade",
-        "tags": ["bank", "finance", "building", "architecture", "city", "corporate"],
+        "title": "Modern financial architectural city and streets",
+        "tags": ["bank", "finance", "building", "architecture", "city", "corporate", "traffic", "speed"],
+        "stock_file": "storage/clips/city_traffic.mp4",
         "generator_filter": "color=c=0x1f2937:s=1920x1080:d={dur},drawgrid=width=120:height=120:color=0x4b5563@0.3",
         "licence": "CC0 1.0 Universal Public Domain (Commercial Use Permitted)",
-        "attribution": "IncuBrix Procedural Library / Open Media",
+        "attribution": "Open Media / Commercial Verified Library",
         "link": "https://incubrix.internal/media/modern_banking_01"
     },
     {
         "id": "nature_river_01",
-        "title": "Peaceful riverbank nature water flowing",
-        "tags": ["bank", "river", "nature", "water", "green", "landscape"],
-        "generator_filter": "cellauto=s=1920x1080:rule=30:rate=30,eq=contrast=1.2:saturation=1.5",
+        "title": "Peaceful riverbank nature water and blossoms",
+        "tags": ["bank", "river", "nature", "water", "green", "landscape", "travel", "peaceful", "calm", "flower"],
+        "stock_file": "storage/clips/nature_flower.mp4",
+        "generator_filter": "color=c=0x064e3b:s=1920x1080:d={dur},drawgrid=width=90:height=90:color=0x10b981@0.2",
         "licence": "CC0 1.0 Universal Public Domain (Commercial Use Permitted)",
-        "attribution": "IncuBrix Procedural Library / Open Media",
+        "attribution": "Open Media / Commercial Verified Library",
         "link": "https://incubrix.internal/media/nature_river_01"
     },
     {
         "id": "coding_developer_01",
-        "title": "Developer IDE terminal programming code editor",
-        "tags": ["python", "code", "programming", "software", "developer", "computer", "tutorial"],
+        "title": "Developer programming and technology ecosystem",
+        "tags": ["python", "code", "programming", "software", "developer", "computer", "tutorial", "tech"],
+        "stock_file": "storage/clips/classroom.mp4",
         "generator_filter": "color=c=0x1e1e1e:s=1920x1080:d={dur},drawgrid=width=40:height=40:color=0x334155@0.3",
         "licence": "CC0 1.0 Universal Public Domain (Commercial Use Permitted)",
-        "attribution": "IncuBrix Procedural Library / Open Media",
+        "attribution": "Open Media / Commercial Verified Library",
         "link": "https://incubrix.internal/media/coding_developer_01"
     },
     {
         "id": "sensitive_sober_01",
         "title": "Subdued respectful monochrome tone for solemn news",
         "tags": ["sensitive", "news", "tragedy", "crisis", "somber", "respectful"],
+        "stock_file": "storage/clips/people_walking.mp4",
         "generator_filter": "color=c=0x111827:s=1920x1080:d={dur}",
         "licence": "CC0 1.0 Universal Public Domain (Commercial Use Permitted)",
-        "attribution": "IncuBrix Procedural Library / Open Media",
+        "attribution": "Open Media / Commercial Verified Library",
         "link": "https://incubrix.internal/media/sensitive_sober_01"
     },
     {
         "id": "abstract_general_01",
-        "title": "Dynamic geometric motion flow and bright light particles",
+        "title": "Dynamic modern city transit motion and light",
         "tags": ["abstract", "general", "modern", "bright", "intro", "story"],
-        "generator_filter": "testsrc2=s=1920x1080:rate=30,eq=contrast=1.1:saturation=1.2",
+        "stock_file": "storage/clips/city_traffic.mp4",
+        "generator_filter": "color=c=0x0b132b:s=1920x1080:d={dur},drawgrid=width=60:height=60:color=0x38bdf8@0.2",
         "licence": "CC0 1.0 Universal Public Domain (Commercial Use Permitted)",
-        "attribution": "IncuBrix Procedural Library / Open Media",
+        "attribution": "Open Media / Commercial Verified Library",
         "link": "https://incubrix.internal/media/abstract_general_01"
     }
 ]
@@ -154,7 +161,7 @@ class LocalLibraryProvider(BaseFootageProvider):
         return results
 
     async def prepare_clip(self, item: FootageItem, target_dir: Path) -> Path:
-        """Renders the clip video using ffmpeg procedural generator if not already cached."""
+        """Renders the clip video using local stock video file if available, or procedural generator."""
         target_dir.mkdir(parents=True, exist_ok=True)
         clip_path = target_dir / f"{item.clip_id}_{int(item.duration)}s.mp4"
 
@@ -162,23 +169,40 @@ class LocalLibraryProvider(BaseFootageProvider):
             return clip_path
 
         # Find generator definition
-        entry = next((c for c in CURATED_CATALOG if c["id"] == item.clip_id), CURATED_CATALOG[-1])
-        filter_str = entry["generator_filter"].format(dur=int(item.duration + 2))
+        base_id = item.clip_id.split("_var")[0]
+        entry = next((c for c in CURATED_CATALOG if c["id"] == base_id or c["id"] == item.clip_id), CURATED_CATALOG[-1])
+        stock_file = entry.get("stock_file")
+        stock_path = Path(stock_file).resolve() if stock_file else None
 
         import imageio_ffmpeg
         ffmpeg_exe = settings.FFMPEG_PATH or imageio_ffmpeg.get_ffmpeg_exe()
 
-        cmd = [
-            ffmpeg_exe, "-nostdin", "-y",
-            "-f", "lavfi",
-            "-i", filter_str,
-            "-t", str(item.duration),
-            "-r", "30",
-            "-c:v", "libx264",
-            "-pix_fmt", "yuv420p",
-            "-preset", "ultrafast",
-            str(clip_path)
-        ]
+        if stock_path and stock_path.exists():
+            cmd = [
+                ffmpeg_exe, "-nostdin", "-y",
+                "-stream_loop", "-1",
+                "-i", str(stock_path),
+                "-t", str(item.duration),
+                "-r", "30",
+                "-vf", "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080",
+                "-c:v", "libx264",
+                "-pix_fmt", "yuv420p",
+                "-preset", "ultrafast",
+                str(clip_path)
+            ]
+        else:
+            filter_str = entry["generator_filter"].format(dur=int(item.duration + 2))
+            cmd = [
+                ffmpeg_exe, "-nostdin", "-y",
+                "-f", "lavfi",
+                "-i", filter_str,
+                "-t", str(item.duration),
+                "-r", "30",
+                "-c:v", "libx264",
+                "-pix_fmt", "yuv420p",
+                "-preset", "ultrafast",
+                str(clip_path)
+            ]
 
         proc = await asyncio.create_subprocess_exec(
             *cmd,

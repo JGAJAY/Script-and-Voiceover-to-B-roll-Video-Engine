@@ -1,0 +1,381 @@
+openapi: 3.1.0
+info:
+  title: IncuBrix B-Roll Video Engine
+  summary: Script and Voiceover to B-roll Video Engine API
+  description: >
+    Automated service that converts a voiceover audio file, script, or IncuBrix scene list
+    into a finished, licence-clean B-roll video timed precisely to narration, with subtitle
+    burn-in, timeline metadata, and manifest audit trail.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Local development / Docker compose service
+paths:
+  /health:
+    get:
+      summary: Liveness health check
+      operationId: health_check
+      responses:
+        '200':
+          description: Service is alive and healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: healthy
+                  app:
+                    type: string
+                    example: IncuBrix B-Roll Video Engine
+                  version:
+                    type: string
+                    example: 1.0.0
+  /ready:
+    get:
+      summary: Readiness dependency check
+      operationId: readiness_check
+      responses:
+        '200':
+          description: All critical dependencies (FFmpeg, storage) ready
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ready
+                  dependencies:
+                    type: object
+                    properties:
+                      ffmpeg:
+                        type: boolean
+                        example: true
+                      storage:
+                        type: boolean
+                        example: true
+
+  /api/v1/broll/jobs:
+    post:
+      summary: Submit B-roll Video Generation Job
+      operationId: create_broll_job
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema:
+            type: string
+          description: Unique client key ensuring safe retries without duplicate processing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrollJobRequest'
+      responses:
+        '202':
+          description: Job accepted for asynchronous background processing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobAcceptedResponse'
+        '400':
+          description: Invalid request parameters or silent audio detected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '415':
+          description: Unsupported audio media type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/broll/jobs/upload:
+    post:
+      summary: Upload Media and Create Job
+      operationId: upload_and_create_job
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Audio file (mp3, wav, m4a) or script text file (.txt)
+                voice:
+                  type: string
+                  default: en-IN-female
+                style:
+                  type: string
+                  default: bright, modern, real-world footage
+                aspect_ratios:
+                  type: string
+                  default: 16:9,9:16
+                avoid:
+                  type: string
+                  description: Comma separated tags to avoid
+                burn_in_captions:
+                  type: boolean
+                  default: true
+      responses:
+        '202':
+          description: Upload accepted and queued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobAcceptedResponse'
+
+  /api/v1/jobs/{job_id}:
+    get:
+      summary: Get Job Status and Results
+      operationId: get_job_status
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Current job execution status, progress, and download links
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobStatusResponse'
+        '404':
+          description: Job ID not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/broll/jobs/{job_id}/swap:
+    post:
+      summary: Swap Clip for a Scene (Partial Fast Re-render)
+      operationId: swap_clip_endpoint
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClipSwapRequest'
+      responses:
+        '200':
+          description: Scene clip replaced and partial video segment re-rendered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  job_id:
+                    type: string
+                  swap:
+                    type: object
+        '400':
+          description: Invalid scene index or job not ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Job ID not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/jobs/{job_id}/download/{filename}:
+    get:
+      summary: Download Job Output Artifact
+      operationId: download_job_file
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Binary file stream (video/mp4, text/plain, or application/json)
+        '404':
+          description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    SceneInput:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          description: Narration sentence or phrase
+        visual_hint:
+          type: string
+          description: Optional creative visual description for footage matching
+
+    CaptionsConfig:
+      type: object
+      properties:
+        burn_in:
+          type: boolean
+          default: true
+        srt:
+          type: boolean
+          default: true
+
+    BrollJobRequest:
+      type: object
+      properties:
+        audio_url:
+          type: string
+          nullable: true
+          description: URL to external audio file (mp3, wav, m4a)
+        script:
+          type: string
+          nullable: true
+          description: Plain text script
+        scenes:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/SceneInput'
+        voice:
+          type: string
+          default: en-IN-female
+          description: Voice identifier (en-IN-female, hi-IN-female, ta-IN-female, en-US-female)
+        aspect_ratios:
+          type: array
+          items:
+            type: string
+            enum: ["16:9", "9:16", "1:1"]
+          default: ["16:9", "9:16"]
+        style:
+          type: string
+          default: bright, modern, real-world footage
+        avoid:
+          type: array
+          items:
+            type: string
+          example: ["people's faces", "alcohol"]
+        captions:
+          $ref: '#/components/schemas/CaptionsConfig'
+        callback_url:
+          type: string
+          nullable: true
+          description: Webhook URL invoked on completion with HMAC-SHA256 signature
+
+    JobAcceptedResponse:
+      type: object
+      properties:
+        job_id:
+          type: string
+          example: job_9e2b1029c19f
+        status:
+          type: string
+          example: queued
+        created_at:
+          type: string
+          format: date-time
+        message:
+          type: string
+
+    JobStatusResponse:
+      type: object
+      properties:
+        job_id:
+          type: string
+        status:
+          type: string
+          enum: [queued, running, succeeded, failed]
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+        stage:
+          type: string
+          example: rendering_video
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        result:
+          type: object
+          nullable: true
+        error:
+          type: object
+          nullable: true
+        timings:
+          type: object
+          nullable: true
+
+    ClipSwapRequest:
+      type: object
+      required:
+        - scene_index
+      properties:
+        scene_index:
+          type: integer
+          description: Zero-based index of the scene to swap
+        new_query:
+          type: string
+          nullable: true
+        preferred_source:
+          type: string
+          enum: [stock, generative]
+          nullable: true
+
+    ErrorDetails:
+      type: object
+      properties:
+        code:
+          type: string
+          example: INVALID_INPUT
+        message:
+          type: string
+        retryable:
+          type: boolean
+          example: false
+        details:
+          type: object
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorDetails'

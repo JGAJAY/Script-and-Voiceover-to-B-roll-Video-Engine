@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IncuBrix - Script & Voiceover to B-Roll Video Engine</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-brand">
+      <span class="logo-badge">IncuBrix</span>
+      <span class="title">B-Roll Video Engine <span class="tag">Assessment 3</span></span>
+    </div>
+    <div class="nav-links">
+      <a href="/docs" target="_blank" class="nav-btn">API Docs (Swagger)</a>
+      <a href="/ready" target="_blank" class="nav-btn">Health & Readiness</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="grid-layout">
+      <!-- Input Column -->
+      <section class="card input-card">
+        <h2>1. Job Configuration</h2>
+        
+        <div class="preset-selector">
+          <label>Quick Presets:</label>
+          <div class="pill-group">
+            <button type="button" class="pill" onclick="loadPreset('tutorial')">Tutorial (Tech)</button>
+            <button type="button" class="pill" onclick="loadPreset('promo')">Product Promo</button>
+            <button type="button" class="pill" onclick="loadPreset('hindi')">Hindi Voiceover</button>
+            <button type="button" class="pill" onclick="loadPreset('tamil')">Tamil Voiceover</button>
+            <button type="button" class="pill" onclick="loadPreset('abstract')">Abstract / Stats</button>
+          </div>
+        </div>
+
+        <form id="jobForm">
+          <div class="form-group">
+            <label for="scriptText">Script / Narration Text:</label>
+            <textarea id="scriptText" rows="5" placeholder="Enter script text to synthesize narration and generate timed B-roll footage..."></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="voiceSelect">Voice / Language:</label>
+              <select id="voiceSelect">
+                <option value="en-IN-female">English (India) - Female</option>
+                <option value="en-IN-male">English (India) - Male</option>
+                <option value="en-US-female">English (US) - Female</option>
+                <option value="hi-IN-female">Hindi (India) - Female</option>
+                <option value="ta-IN-female">Tamil (India) - Female</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="styleInput">Footage Style:</label>
+              <input type="text" id="styleInput" value="bright, modern, real-world footage">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Aspect Ratios:</label>
+              <div class="checkbox-group">
+                <label><input type="checkbox" name="aspectRatio" value="16:9" checked> 16:9 Landscape</label>
+                <label><input type="checkbox" name="aspectRatio" value="9:16" checked> 9:16 Portrait</label>
+                <label><input type="checkbox" name="aspectRatio" value="1:1"> 1:1 Square</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="avoidInput">Avoid Content (comma separated):</label>
+              <input type="text" id="avoidInput" value="people's faces, alcohol">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label><input type="checkbox" id="burnInCaptions" checked> Burn-in Captions into Video</label>
+          </div>
+
+          <button type="submit" id="submitBtn" class="btn primary-btn">Generate B-Roll Video</button>
+        </form>
+      </section>
+
+      <!-- Results Column -->
+      <section class="card results-card">
+        <h2>2. Real-Time Monitor & Preview</h2>
+
+        <div id="statusContainer" class="status-panel hidden">
+          <div class="status-header">
+            <div>
+              <span id="jobIdLabel" class="job-id">job_...</span>
+              <span id="statusBadge" class="badge">QUEUED</span>
+            </div>
+            <div id="stageLabel" class="stage-label">Initializing...</div>
+          </div>
+
+          <div class="progress-bar-container">
+            <div id="progressBar" class="progress-bar" style="width: 0%"></div>
+          </div>
+          <div id="progressText" class="progress-text">0% Completed</div>
+        </div>
+
+        <div id="errorContainer" class="error-panel hidden">
+          <h3>Error</h3>
+          <p id="errorMessage"></p>
+        </div>
+
+        <div id="outputContainer" class="output-panel hidden">
+          <!-- Ratio Tabs -->
+          <div class="tabs" id="ratioTabs">
+            <button class="tab active" onclick="switchVideoTab('16:9')">16:9 Landscape</button>
+            <button class="tab" onclick="switchVideoTab('9:16')">9:16 Portrait</button>
+          </div>
+
+          <div class="video-wrapper">
+            <video id="videoPlayer" controls autoplay muted></video>
+          </div>
+
+          <div class="download-links">
+            <a id="downloadVideoBtn" class="btn outline-btn" download>Download Video</a>
+            <a id="downloadSrtBtn" class="btn outline-btn" download>Download Captions (.srt)</a>
+            <a id="downloadTimelineBtn" class="btn outline-btn" download>timeline.json</a>
+            <a id="downloadManifestBtn" class="btn outline-btn" download>manifest.json</a>
+          </div>
+
+          <!-- Clip Swap Section (Advanced Requirement) -->
+          <div class="clip-swap-section">
+            <h3>Fast Clip Swap (Advanced Feature)</h3>
+            <p class="subtitle">Replace one scene's clip and trigger an instant partial re-render without full re-encoding.</p>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="swapSceneIndex">Scene Index:</label>
+                <input type="number" id="swapSceneIndex" min="0" value="0">
+              </div>
+              <div class="form-group flex-2">
+                <label for="swapQuery">New Footage Prompt / Visual Hint:</label>
+                <input type="text" id="swapQuery" placeholder="e.g. drone shot of high-tech server room">
+              </div>
+              <div class="form-group">
+                <label for="swapSource">Source:</label>
+                <select id="swapSource">
+                  <option value="stock">Stock Footage</option>
+                  <option value="generative">Generative AI</option>
+                </select>
+              </div>
+              <div class="form-group btn-align">
+                <button type="button" id="swapBtn" class="btn secondary-btn" onclick="executeClipSwap()">Swap Clip</button>
+              </div>
+            </div>
+            <div id="swapFeedback" class="swap-feedback hidden"></div>
+          </div>
+
+          <!-- Timeline Viewer -->
+          <div class="timeline-section">
+            <h3>Scene Timeline & Licencing</h3>
+            <div id="timelineTableContainer" class="timeline-table-wrapper">
+              <table class="timeline-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Time</th>
+                    <th>Narration Text</th>
+                    <th>Clip Source</th>
+                    <th>AI Gen?</th>
+                    <th>Licence & Attribution</th>
+                    <th>Reason Chosen</th>
+                    <th>Score</th>
+                  </tr>
+                </thead>
+                <tbody id="timelineBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Manifest Metrics -->
+          <div class="manifest-section">
+            <h3>Production Metrics (Manifest)</h3>
+            <div id="manifestSummary" class="metrics-grid"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

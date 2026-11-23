@@ -1,0 +1,9 @@
+Script: "A small startup is presenting its new collaboration platform to investors. The CEO talks about seamless teamwork, real‑time document editing, and secure cloud storage. Show a visual of a modern office, a dynamic dashboard with user activity graphs, and a handshake representing partnership.
+Voice: "en-US‑Matthew"
+
+# Expected video sequence
+1. Opening shot of a bright, modern coworking space with people collaborating.
+2. Close‑up of a tablet displaying a live dashboard with charts and user avatars.
+3. Animation of documents syncing across devices with a lock icon for security.
+4. Visual of two hands shaking over a digital globe, symbolizing partnership.
+5. Closing scene with the company logo and a voice‑over inviting investors to join the future of teamwork.

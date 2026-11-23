@@ -1,0 +1,9 @@
+Script: "Jane is building a Python web scraper to collect data from e‑commerce sites. She writes code to parse HTML, handle pagination, and store results in a CSV. Show a visual of a laptop screen with code, data flowing into a spreadsheet, and a sleek city skyline representing the internet.
+Voice: "en-US‑Matthew"
+
+# Expected video sequence
+1. Close‑up of a laptop with VS Code open, typing Python code.
+2. Animation of a spider‑web network crawling across e‑commerce product pages.
+3. Transition to a CSV file filling with rows of data.
+4. Overlay of a city skyline silhouette with glowing data streams.
+5. End with a calm office background and a voice‑over encouraging developers to automate data collection.

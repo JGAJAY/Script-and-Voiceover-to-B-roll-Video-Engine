@@ -1,0 +1,9 @@
+Script: "John saved $5,000 this month by cutting unnecessary expenses. He plans to invest the saved amount into a high‑yield savings account. Show a visual of a growing bank balance with coins and digital finance graphics."
+Voice: "en-US‑Matthew"
+
+# Expected video sequence
+1. Opening scene of a person reviewing a budget spreadsheet.
+2. Close‑up of a hand placing $5,000 into a piggy bank.
+3. Transition to a digital dashboard showing a rising balance.
+4. Overlay of animated coins and the phrase “Invest wisely”.
+5. End with a calm office background and a voice‑over reminder to save regularly.

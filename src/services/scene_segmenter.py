@@ -172,7 +172,8 @@ class SceneSegmenter:
 
             # Check sentence or major punctuation boundary
             is_sentence_boundary = bool(re.search(r"[\.\!\?]$", word_str))
-            is_phrase_boundary = bool(re.search(r"[\,\;\:]$", word_str))
+            is_phrase_boundary = bool(re.search(r"[\;\:]$", word_str))
+            is_comma_boundary = bool(re.search(r"[\,]$", word_str))
             is_last_word = (idx == len(words) - 1)
 
             should_split = False
@@ -180,7 +181,9 @@ class SceneSegmenter:
                 should_split = True
             elif chunk_duration >= min_dur and is_sentence_boundary:
                 should_split = True
-            elif chunk_duration >= (min_dur + 1.0) and is_phrase_boundary:
+            elif chunk_duration >= (min_dur + 2.5) and is_phrase_boundary:
+                should_split = True
+            elif chunk_duration >= (max_dur - 1.0) and is_comma_boundary:
                 should_split = True
             elif chunk_duration >= max_dur:
                 should_split = True
@@ -269,23 +272,25 @@ class SceneSegmenter:
                     disambiguated = disambig["recommended"]
                     tags.append("semantic_disambiguation_value")
                 elif key == "cloud":
-                    # Check if tech or sky
-                    if any(t in text_lower for t in ["server", "compute", "storage", "tech", "data", "aws", "software"]):
-                        disambiguated = disambig["computing"]
-                    else:
+                    # Weather if explicit rain, storm, sky or airplane
+                    if any(t in text_lower for t in ["rain", "storm", "sky", "weather", "wind", "airplane", "flying", "cumulus", "sunshine"]):
                         disambiguated = disambig["weather"]
+                    else:
+                        disambiguated = disambig["computing"]
                     tags.append("semantic_disambiguation_cloud")
                 elif key == "bank":
-                    if any(t in text_lower for t in ["money", "deposit", "finance", "loan", "account", "rate"]):
-                        disambiguated = disambig["financial"]
-                    else:
+                    # River/nature if water, river, stream, shore, lake
+                    if any(t in text_lower for t in ["river", "stream", "water", "lake", "shore", "beach", "greenery", "swimming", "fish"]):
                         disambiguated = disambig["river"]
+                    else:
+                        disambiguated = disambig["financial"]
                     tags.append("semantic_disambiguation_bank")
                 elif key == "python":
-                    if any(t in text_lower for t in ["code", "software", "developer", "script", "program", "syntax"]):
-                        disambiguated = disambig["programming"]
-                    else:
+                    # Reptile ONLY if explicit snake, venom, zoo, jungle, wild animal
+                    if any(t in text_lower for t in ["snake", "serpent", "reptile", "zoo", "jungle", "wildlife", "species", "venom", "bite"]):
                         disambiguated = disambig["reptile"]
+                    else:
+                        disambiguated = disambig["programming"]
                     tags.append("semantic_disambiguation_python")
 
         # Check named entities or brands

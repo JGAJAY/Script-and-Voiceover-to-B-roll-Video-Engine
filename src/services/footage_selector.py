@@ -58,12 +58,14 @@ class FootageSelector:
                     }
                 )
                 # Anti-repeat check: select candidate not yet used in this job
+                # Prefer an unused candidate ONLY if it has meaningful relevance
                 for cand in candidates:
-                    if cand.clip_id not in used_clip_ids:
+                    if cand.clip_id not in used_clip_ids and cand.relevance_score >= 3.8:
                         chosen_item = cand
                         break
+
                 if not chosen_item and candidates:
-                    # If all used, modify clip_id with variance offset to prevent exact duplicate file reuse
+                    # If all relevant unique clips are used, reuse top-relevant clip with variant slice offset
                     chosen_item = candidates[0].model_copy()
                     chosen_item.clip_id = f"{chosen_item.clip_id}_var{scene.scene_index}"
 
@@ -135,11 +137,13 @@ class FootageSelector:
         if scene.visual_hint:
             return scene.visual_hint
 
+        import re
+        stop_words = {"with", "that", "this", "from", "have", "were", "your", "will", "been", "their", "about", "into", "over", "some", "most", "than"}
+        words = [w for w in re.sub(r"[^\w\s]", " ", scene.text.lower()).split() if len(w) > 2 and w not in stop_words]
+        
+        base_query = " ".join(words) if words else "modern real world"
         if scene.disambiguated_concept:
-            return scene.disambiguated_concept
-
-        # Extract dominant meaningful words
-        words = [w for w in scene.text.lower().split() if len(w) > 3 and w not in {"with", "that", "this", "from", "have", "were"}]
-        return " ".join(words[:4]) if words else "modern real world"
+            return f"{base_query} {scene.disambiguated_concept}"
+        return base_query
 
 footage_selector = FootageSelector()

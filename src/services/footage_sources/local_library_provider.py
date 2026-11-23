@@ -165,14 +165,15 @@ class LocalLibraryProvider(BaseFootageProvider):
         target_dir.mkdir(parents=True, exist_ok=True)
         clip_path = target_dir / f"{item.clip_id}_{int(item.duration)}s.mp4"
 
-        if clip_path.exists() and clip_path.stat().st_size > 1024:
-            return clip_path
-
         # Find generator definition
         base_id = item.clip_id.split("_var")[0]
         entry = next((c for c in CURATED_CATALOG if c["id"] == base_id or c["id"] == item.clip_id), CURATED_CATALOG[-1])
         stock_file = entry.get("stock_file")
         stock_path = Path(stock_file).resolve() if stock_file else None
+
+        min_size = 500_000 if (stock_path and stock_path.exists()) else 1024
+        if clip_path.exists() and clip_path.stat().st_size > min_size:
+            return clip_path
 
         import imageio_ffmpeg
         ffmpeg_exe = settings.FFMPEG_PATH or imageio_ffmpeg.get_ffmpeg_exe()

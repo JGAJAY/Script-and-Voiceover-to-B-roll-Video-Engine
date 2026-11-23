@@ -188,15 +188,21 @@ async def download_job_file(job_id: str, filename: str):
         )
 
     media_type = "application/octet-stream"
+    is_media = False
     if filename.endswith(".mp4"):
         media_type = "video/mp4"
+        is_media = True
+    elif filename.endswith((".mp3", ".wav")):
+        media_type = "audio/mpeg" if filename.endswith(".mp3") else "audio/wav"
+        is_media = True
     elif filename.endswith(".srt"):
-        media_type = "text/plain"
+        media_type = "text/plain; charset=utf-8"
     elif filename.endswith(".json"):
         media_type = "application/json"
 
     return FileResponse(
         path=file_path,
         media_type=media_type,
-        filename=filename
+        content_disposition_type="inline" if is_media else "attachment",
+        filename=filename if not is_media else None
     )

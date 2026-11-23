@@ -1,0 +1,8 @@
+{
+  "script": "புதிய தொழில்நுட்பம் நம்முடைய படைப்பாற்றலை அடுத்த நிலைக்கு கொண்டு செல்கிறது. மிக விரைவாக உயர்தர வீடியோக்களை உருவாக்குங்கள். உங்கள் கனவுகளை நிஜமாக்குங்கள்.",
+  "voice": "ta-IN-female",
+  "aspect_ratios": ["16:9"],
+  "style": "modern creative technology innovation bright",
+  "avoid": ["people's faces"],
+  "captions": { "burn_in": true, "srt": true }
+}

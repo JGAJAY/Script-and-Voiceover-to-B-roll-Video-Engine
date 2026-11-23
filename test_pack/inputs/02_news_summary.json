@@ -1,0 +1,8 @@
+{
+  "script": "Global markets rallied today following positive economic forecasts and robust manufacturing output. Technology stocks led the gains across major indices. Central bankers indicated that interest rate stability will support sustained long term investments.",
+  "voice": "en-US-female",
+  "aspect_ratios": ["16:9"],
+  "style": "professional broadcast news corporate finance",
+  "avoid": ["weapons", "alcohol"],
+  "captions": { "burn_in": true, "srt": true }
+}

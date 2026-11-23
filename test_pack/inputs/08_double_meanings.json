@@ -1,0 +1,8 @@
+{
+  "script": "Building long term value requires understanding modern infrastructure. Moving your data to the cloud allows your bank to scale services seamlessly while writing software in Python.",
+  "voice": "en-IN-female",
+  "aspect_ratios": ["16:9"],
+  "style": "high tech datacenter financial architecture clean code",
+  "avoid": ["people's faces"],
+  "captions": { "burn_in": true, "srt": true }
+}

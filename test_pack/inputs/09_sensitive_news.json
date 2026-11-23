@@ -1,0 +1,8 @@
+{
+  "script": "The community gathered in quiet remembrance to honor the victims of the recent crisis. Citizens placed candles along the monument as leaders called for solidarity and lasting peace.",
+  "voice": "en-US-female",
+  "aspect_ratios": ["16:9"],
+  "style": "respectful sober memorial solemn documentary",
+  "avoid": ["people's faces", "alcohol", "bright graphics"],
+  "captions": { "burn_in": true, "srt": true }
+}

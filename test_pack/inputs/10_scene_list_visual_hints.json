@@ -1,0 +1,21 @@
+{
+  "scenes": [
+    {
+      "text": "Every line of code you write shapes the reliability of your service.",
+      "visual_hint": "macro shot of developer fingers typing clean code in dark theme editor"
+    },
+    {
+      "text": "Automated pipelines continuously test and package containers for cloud deployment.",
+      "visual_hint": "server racks in modern blue lit data center with pulsing network data"
+    },
+    {
+      "text": "Delivering exceptional uptime and value to customers worldwide.",
+      "visual_hint": "glowing abstract global network connections over planet earth"
+    }
+  ],
+  "voice": "en-IN-female",
+  "aspect_ratios": ["16:9", "9:16"],
+  "style": "clean modern technology developer ecosystem",
+  "avoid": ["people's faces"],
+  "captions": { "burn_in": true, "srt": true }
+}

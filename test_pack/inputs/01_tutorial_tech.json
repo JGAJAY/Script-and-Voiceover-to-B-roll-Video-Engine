@@ -1,0 +1,8 @@
+{
+  "script": "To build an asynchronous web service in Python, start by defining clean data schemas using Pydantic. Next, structure your route handlers with dependency injection. Finally, profile your database queries to ensure maximum throughput under high concurrency.",
+  "voice": "en-IN-female",
+  "aspect_ratios": ["16:9", "9:16"],
+  "style": "clean modern technology developer IDE terminal",
+  "avoid": ["people's faces", "alcohol"],
+  "captions": { "burn_in": true, "srt": true }
+}

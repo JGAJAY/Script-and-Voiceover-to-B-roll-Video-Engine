@@ -1,0 +1,8 @@
+{
+  "script": "हमारा उद्देश्य रचनाकारों को शक्तिशाली AI उपकरण प्रदान करना है। अब हर विचार को आसानी से एक जीवंत वीडियो में बदला जा सकता है। समय बचाइए और अपनी रचनात्मकता को नई उड़ान दीजिए।",
+  "voice": "hi-IN-female",
+  "aspect_ratios": ["16:9", "9:16"],
+  "style": "dynamic modern technology Indian context innovation",
+  "avoid": ["people's faces"],
+  "captions": { "burn_in": true, "srt": true }
+}

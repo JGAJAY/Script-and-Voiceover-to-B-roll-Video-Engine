@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # IncuBrix B-Roll Video Engine API Service
+  engine:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: incubrix-broll-engine
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=production
+      - PORT=8000
+      - HOST=0.0.0.0
+      - STORAGE_TYPE=local
+      - STORAGE_DIR=/app/storage
+      - BASE_URL=http://localhost:8000
+      - S3_ENDPOINT=http://minio:9000
+      - S3_BUCKET=incubrix-videos
+      - S3_ACCESS_KEY=minioadmin
+      - S3_SECRET_KEY=minioadmin
+      - WEBHOOK_SECRET=incubrix-super-secret-hmac-key
+      - DEFAULT_VOICE=en-IN-female
+      - PEXELS_API_KEY=${PEXELS_API_KEY:-}
+      - PIXABAY_API_KEY=${PIXABAY_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ENABLE_MOCK_SOURCES=true
+    volumes:
+      - engine-storage:/app/storage
+    depends_on:
+      - minio
+    restart: unless-stopped
+
+  # S3-Compatible Object Storage (MinIO)
+  minio:
+    image: minio/minio:latest
+    container_name: incubrix-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data
+    restart: unless-stopped
+
+volumes:
+  engine-storage:
+  minio-data:

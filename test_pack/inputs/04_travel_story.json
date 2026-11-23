@@ -1,0 +1,8 @@
+{
+  "script": "Traveling through the quiet mountain valleys taught me the rhythm of silence. As the morning fog lifted, the riverbank shimmered under golden light. It was a gentle reminder to slow down.",
+  "voice": "en-IN-female",
+  "aspect_ratios": ["16:9", "1:1"],
+  "style": "calm organic nature river landscape golden hour",
+  "avoid": ["alcohol", "fast cuts"],
+  "captions": { "burn_in": true, "srt": true }
+}

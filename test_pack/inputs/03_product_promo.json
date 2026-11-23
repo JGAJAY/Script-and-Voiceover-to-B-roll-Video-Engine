@@ -1,0 +1,8 @@
+{
+  "script": "Meet the next generation of creative editing. Our platform automates B-roll sourcing in seconds so you can focus on storytelling. Join thousands of creators transforming production today.",
+  "voice": "en-IN-female",
+  "aspect_ratios": ["16:9", "9:16"],
+  "style": "cinematic fast-paced modern creative agency",
+  "avoid": ["people's faces"],
+  "captions": { "burn_in": true, "srt": true }
+}
